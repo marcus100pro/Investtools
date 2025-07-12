@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Steuereffekt Rechner</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+    th, td {
+      border: 1px solid #999;
+      padding: 10px;
+      text-align: right;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    h2 {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2>Steuereffekt beim Realisieren von Gewinnen</h2>
+
+  <label for="buyPrice">Kaufpreis pro Aktie (€):</label>
+  <input id="buyPrice" type="text" value="100">
+
+  <label for="sellPrice">Verkaufspreis pro Aktie (€):</label>
+  <input id="sellPrice" type="text" value="120">
+
+  <label for="shares">Anzahl der Aktien:</label>
+  <input id="shares" type="text" value="100">
+
+  <button onclick="calculate()">Berechnen</button>
+
+  <table>
+    <thead>
+      <tr><th>Ergebnis</th><th>Wert</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Gesamter Gewinn (€)</td><td id="profit"></td></tr>
+      <tr><td>Steuerlast (26,375%)</td><td id="tax"></td></tr>
+      <tr><td>Nettoerlös (€)</td><td id="net"></td></tr>
+      <tr><td>Wiedereinstiegskurs (€)</td><td id="reentry"></td></tr>
+      <tr><td>Erforderlicher Kursrückgang (%)</td><td id="drop"></td></tr>
+    </tbody>
+  </table>
+
+  <script>
+    function parseNumber(value) {
+      return parseFloat(value.replace(',', '.')) || 0;
+    }
+
+    function calculate() {
+      const buy = parseNumber(document.getElementById('buyPrice').value);
+      const sell = parseNumber(document.getElementById('sellPrice').value);
+      const shares = parseInt(document.getElementById('shares').value) || 0;
+
+      const totalBuy = buy * shares;
+      const totalSell = sell * shares;
+      const profit = totalSell - totalBuy;
+      const tax = profit * 0.26375;
+      const net = totalSell - tax;
+      const reentryPrice = shares > 0 ? net / shares : 0;
+      const dropPercent = sell > 0 ? ((sell - reentryPrice) / sell * 100).toFixed(2) : 0;
+
+      document.getElementById('profit').innerText = profit.toFixed(2) + " €";
+      document.getElementById('tax').innerText = tax.toFixed(2) + " €";
+      document.getElementById('net').innerText = net.toFixed(2) + " €";
+      document.getElementById('reentry').innerText = reentryPrice.toFixed(2) + " €";
+      document.getElementById('drop').innerText = dropPercent + " %";
+    }
+  </script>
+</body>
+</html>
